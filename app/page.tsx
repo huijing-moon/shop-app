@@ -42,9 +42,11 @@ export default function Home() {
               🛍️ My Shop
             </h1>
             <div className="flex items-center gap-4">
+                <Link href={`/cart`}>
               <button className="text-gray-600 hover:text-gray-900">
                 🛒 <span className="ml-1">{getTotalItems()}</span>
               </button>
+                </Link>
             </div>
 
           {/*검색창 추가*/}
