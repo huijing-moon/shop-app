@@ -2,6 +2,7 @@
 import { products } from '@/data/products'
 import {useState} from "react";
 import {Category} from "@/types/product";
+import Link from "next/link";
 
 export default function Home() {
 
@@ -135,6 +136,9 @@ export default function Home() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (  //key!!
+                <Link
+                    key = {product.id}
+                    href={`/product/${product.id}`} >
                 <div
                     key={product.id}
                     className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
@@ -156,12 +160,17 @@ export default function Home() {
                   <span className="text-2xl font-bold text-blue-600">
                     ${product.price}
                   </span>
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                      onClick={(e) =>{
+                          e.preventDefault()
+                          alert(`장바구니 담기!`)
+                      }}>
                         담기
                       </button>
                     </div>
                   </div>
                 </div>
+                </Link>
             ))}
 
           </div>
