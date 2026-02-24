@@ -8,6 +8,8 @@ interface ProductPageProps {
     }>
 }
 
+
+//async 를 붙이면 > 항상 promise를 반환
 export default async function ProductPage({params} : ProductPageProps){
 
     //await으로 params 기다리기

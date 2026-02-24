@@ -3,12 +3,14 @@ import { products } from '@/data/products'
 import {useState} from "react";
 import {Category} from "@/types/product";
 import Link from "next/link";
+import {useCart} from "@/contexts/CartContexts";
 
 export default function Home() {
 
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedCategory, setSelectedCategory] = useState<Category>('all') //<> 타입 지정
     const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'name'>('name')
+    const { addToCart, getTotalItems } = useCart()
 
     const filteredProducts = products
         //카테고리 필터
@@ -41,7 +43,7 @@ export default function Home() {
             </h1>
             <div className="flex items-center gap-4">
               <button className="text-gray-600 hover:text-gray-900">
-                🛒 <span className="ml-1">0</span>
+                🛒 <span className="ml-1">{getTotalItems()}</span>
               </button>
             </div>
 
@@ -163,7 +165,8 @@ export default function Home() {
                       <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                       onClick={(e) =>{
                           e.preventDefault()
-                          alert(`장바구니 담기!`)
+                          e.stopPropagation()
+                          addToCart(product)
                       }}>
                         담기
                       </button>
