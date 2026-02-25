@@ -1,6 +1,7 @@
 import {products} from "@/data/products";
 import { notFound } from 'next/navigation'
 import Link from "next/link";
+import { AddToCartButton } from '@/components/AddToCartButton'
 
 interface ProductPageProps {
     params : Promise<{
@@ -59,7 +60,7 @@ export default async function ProductPage({params} : ProductPageProps){
                                 <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full mb-4">
                               {product.category === 'electronics' ? '전자제품' :
                                   product.category === 'clothing' ? '의류' : '액세서리'}
-                </span>
+                                </span>
 
                                 {/* 상품명 */}
                                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -98,10 +99,9 @@ export default async function ProductPage({params} : ProductPageProps){
 
                             {/* 버튼들 */}
                             <div className="space-y-3 mt-8">
-                                <button className="w-full bg-blue-600 text-white py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition">
-                                    🛒 장바구니에 담기
-                                </button>
-                                <button className="w-full bg-gray-200 text-gray-800 py-4 rounded-lg text-lg font-semibold hover:bg-gray-300 transition">
+                                <div className="space-y-3 mt-8">
+                                    <AddToCartButton product={product} />  {/* ⭐ 컴포넌트 사용 */}
+                                    <button className="w-full bg-gray-200 text-gray-800 py-4 rounded-lg text-lg font-semibold hover:bg-gray-300 transition">
                                     ❤️ 찜하기
                                 </button>
                             </div>
@@ -157,6 +157,7 @@ export default async function ProductPage({params} : ProductPageProps){
                     </div>
                 </div>
             </div>
+        </div>
         </main>
     )
 }

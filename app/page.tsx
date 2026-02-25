@@ -4,6 +4,7 @@ import {useState} from "react";
 import {Category} from "@/types/product";
 import Link from "next/link";
 import {useCart} from "@/contexts/CartContexts";
+import { AddToCartButton } from "@/components/AddToCartButton";
 
 export default function Home() {
 
@@ -164,14 +165,13 @@ export default function Home() {
                   <span className="text-2xl font-bold text-blue-600">
                     ${product.price}
                   </span>
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                      onClick={(e) =>{
-                          e.preventDefault()
-                          e.stopPropagation()
-                          addToCart(product)
-                      }}>
-                        담기
-                      </button>
+                        <div onClick={(e) => e.preventDefault()}>
+                            <AddToCartButton
+                                product={product}
+                                className="!w-auto !py-2 !text-base"
+                            />
+                        </div>
+
                     </div>
                   </div>
                 </div>
