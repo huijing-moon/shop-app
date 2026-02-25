@@ -2,6 +2,9 @@ import {products} from "@/data/products";
 import { notFound } from 'next/navigation'
 import Link from "next/link";
 import { AddToCartButton } from '@/components/AddToCartButton'
+import {doc, getDoc} from "@firebase/firestore";
+import {db} from "@/lib/firebase";
+import {Product} from "@/types/product";
 
 interface ProductPageProps {
     params : Promise<{
@@ -16,10 +19,15 @@ export default async function ProductPage({params} : ProductPageProps){
     //await으로 params 기다리기
     const { id } = await params
 
-    //URL에서 받은 id로 상품찾기
-    const product = products.find( p => p.id === parseInt(id))
-    // URL이 /product/1 → params.id는 "1" (문자열)
-    // parseInt로 숫자로 변환
+    //firestore에서 단일 문서 가져오기
+    const docRef = doc(db, 'products', id)
+    const docSnap = await getDoc(docRef)
+
+    if(!docSnap.exists()){
+        notFound()
+    }
+
+    const product = docSnap.data() as Product
 
 
     //상품이 없으면 404

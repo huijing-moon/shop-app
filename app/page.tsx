@@ -1,5 +1,6 @@
 'use client'
-import { products } from '@/data/products'
+// import { products } from '@/data/products'
+import {useProducts} from "@/hooks/useProducts";
 import {useState} from "react";
 import {Category} from "@/types/product";
 import Link from "next/link";
@@ -12,6 +13,10 @@ export default function Home() {
     const [selectedCategory, setSelectedCategory] = useState<Category>('all') //<> 타입 지정
     const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'name'>('name')
     const { addToCart, getTotalItems } = useCart()
+    const {products, loading , error } =useProducts()
+
+
+
 
     const filteredProducts = products
         //카테고리 필터
@@ -31,7 +36,8 @@ export default function Home() {
             return a.name.localeCompare(b.name)
         })
 
-
+    console.log('🏠 Home 렌더링:', { products, loading, error })  // ⭐ 추가
+    console.log('📊 filteredProducts:', filteredProducts)  // ⭐ 추가
 
 
   return (
@@ -123,66 +129,86 @@ export default function Home() {
             </div>
 
 
+            {/* 제목 */}
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900">
                     전체 상품
                     <span className="text-lg text-gray-500 ml-2">
               ({filteredProducts.length}개)
-                      </span>
+            </span>
                 </h2>
             </div>
-            {filteredProducts.length === 0 ? (
+
+            {/* ⭐ 1. 로딩 상태 추가 */}
+            {loading && (
                 <div className="text-center py-16">
-                    <p className="text-6xl mb-4">🔍</p>
-                    <p className="text-xl text-gray-600">상품을 찾을 수 없습니다</p>
-                    <p className="text-gray-500 mt-2">다른 검색어를 시도해보세요</p>
+                    <div className="text-6xl mb-4 animate-spin">⏳</div>
+                    <p className="text-xl text-gray-600">상품을 불러오는 중...</p>
                 </div>
-            ) : (
+            )}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (  //key!!
-                <Link
-                    key = {product.id}
-                    href={`/product/${product.id}`} >
-                <div
-                    key={product.id}
-                    className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
-                >
-                  {/* 상품 이미지 (이모지) */}
-                  <div className="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-                    <span className="text-7xl">{product.image}</span>
-                  </div>
+            {/* ⭐ 2. 에러 상태 추가 */}
+            {error && (
+                <div className="text-center py-16">
+                    <div className="text-6xl mb-4">⚠️</div>
+                    <p className="text-xl text-red-600">{error}</p>
+                </div>
+            )}
 
-                  {/* 상품 정보 */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {product.description}
-                    </p>
-                    <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-blue-600">
-                    ${product.price}
-                  </span>
-                        <div onClick={(e) => e.preventDefault()}>
-                            <AddToCartButton
-                                product={product}
-                                className="!w-auto !py-2 !text-base"
-                            />
+            {/* ⭐ 3. 상품 목록 (로딩/에러 아닐 때만) */}
+            {!loading && !error && (
+                <>
+                    {filteredProducts.length === 0 ? (
+                        <div className="text-center py-16">
+                            <p className="text-6xl mb-4">🔍</p>
+                            <p className="text-xl text-gray-600">상품을 찾을 수 없습니다</p>
+                            <p className="text-gray-500 mt-2">다른 검색어를 시도해보세요</p>
                         </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {filteredProducts.map((product) => (
+                                <Link
+                                    key={product.id}
+                                    href={`/product/${product.id}`}
+                                >
+                                    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer">
+                                        <div className="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                                            <span className="text-7xl">{product.image}</span>
+                                        </div>
 
-                    </div>
-                  </div>
-                </div>
-                </Link>
-            ))}
-
-          </div>
-                )}
+                                        <div className="p-4">
+                                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                                                {product.name}
+                                            </h3>
+                                            <p className="text-sm text-gray-600 mb-3">
+                                                {product.description}
+                                            </p>
+                                            <div className="flex justify-between items-center">
+                          <span className="text-2xl font-bold text-blue-600">
+                            ${product.price}
+                          </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        addToCart(product)
+                                                    }}
+                                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                                                >
+                                                    담기
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
 
-      </main>
 
+      </main>
   )
 }
+
